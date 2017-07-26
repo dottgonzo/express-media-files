@@ -2,9 +2,10 @@ import * as mediawatch from 'mediawatch'
 import * as Promise from 'bluebird'
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
+import * as  jwt from 'jsonwebtoken'
 
 
-export default function(path){
+export default function(path,config?:{mode?:{type:string,secret?:string}}){
 
 
 const router = express.Router();
