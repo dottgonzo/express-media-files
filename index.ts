@@ -3,9 +3,13 @@ import * as Promise from 'bluebird'
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
 
+
+export default function(path){
+
+
 const router = express.Router();
 
-const fflist = new mediawatch.mediafiles({ path: '/home/dario/Video' })
+const fflist = new mediawatch.mediafiles({ path: path })
 
 
 router.use(bodyParser.json())
@@ -35,6 +39,8 @@ router.get('/user/:token/listjs', function (req, res) {
 })
 
 
+return router
 
 
-export default router
+
+}
