@@ -1,0 +1,40 @@
+{
+  "name": "express-media-files",
+  "version": "0.0.1",
+  "description": "Express media file db",
+  "main": "index.js",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "mediawatch": "0.0.4"
+  },
+  "devDependencies": {
+    "chai": "^4.1.0",
+    "gulp": "^3.9.1",
+    "gulp-bump": "^2.7.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-filter": "^5.0.0",
+    "gulp-mocha": "^4.3.1",
+    "gulp-prompt": "^0.2.0",
+    "gulp-sourcemaps": "^2.6.0",
+    "gulp-tag-version": "^1.3.0",
+    "gulp-typescript": "^3.2.1",
+    "gulp-util": "^3.0.8",
+    "mocha": "^3.4.2",
+    "typescript": "^2.4.2"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dottgonzo/express-media-files.git"
+  },
+  "author": "Dario Caruso",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/dottgonzo/express-media-files/issues"
+  },
+  "homepage": "https://github.com/dottgonzo/express-media-files#readme"
+}
