@@ -5,6 +5,7 @@
     "node": "registry:dt/node#7.0.0+20170322231424"
   },
   "dependencies": {
+    "bluebird": "registry:dt/bluebird#3.5.0+20170323165310",
     "jsonwebtoken": "registry:dt/jsonwebtoken#7.2.0+20161229235100"
   }
 }
