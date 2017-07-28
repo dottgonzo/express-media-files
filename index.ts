@@ -15,13 +15,14 @@ interface IMediaFileResp {
   dir: string
   extensionFamily: string
   extensionType: string
+  uid: string
 }
+
 interface IMediaFileMeta {
 
 }
 
-
-export default function (path, config?: { mode?: { type: string, secret?: string, ignoreExpiration?: true } }) {
+export default function (path, config?: { exclude?:string[], serverUri?: { path: string, uri: string }, mode?: { type: string, secret?: string, ignoreExpiration?: true } }) {
 
   let mode = 'rootuser'
   let secret: any = false
@@ -30,12 +31,14 @@ export default function (path, config?: { mode?: { type: string, secret?: string
       secret = config.mode.secret
       mode = 'users'
     }
+  } else {
+    config={}
   }
 
 
   const router = express.Router();
 
-  const fflist = new mediawatch.mediafiles({ path: path })
+  const fflist = new mediawatch.mediafiles({ path: path, exclude:config.exclude, serverUri: config.serverUri })
 
 
   router.use(bodyParser.json())
