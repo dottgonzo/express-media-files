@@ -5,12 +5,28 @@ import * as bodyParser from 'body-parser'
 import * as  jwt from 'jsonwebtoken'
 
 
+interface IMediaFileResp {
+  meta: IMediaFileMeta
+  duration: string
+  path: string
+  fullname: string
+  name: string
+  extension: string
+  dir: string
+  extensionFamily: string
+  extensionType: string
+}
+interface IMediaFileMeta {
+
+}
+
+
 export default function (path, config?: { mode?: { type: string, secret?: string, ignoreExpiration?: true } }) {
 
   let mode = 'rootuser'
   let secret: any = false
   if (config) {
-    if (config.mode && config.mode.type === 'restricted' && config.mode.secret) {
+    if (config.mode && config.mode.type === 'users' && config.mode.secret) {
       secret = config.mode.secret
       mode = 'users'
     }
@@ -29,11 +45,19 @@ export default function (path, config?: { mode?: { type: string, secret?: string
   // use res.render to load up an ejs view file
 
 
-  function getFilesByToken(token) {
+  function getFilesByToken(token, list: IMediaFileResp[]): IMediaFileResp[] | false {
 
     try {
       const decoded = jwt.verify(token, config.mode.secret, { ignoreExpiration: config.mode.ignoreExpiration })
-      return JSON.parse(decoded).prefix
+      const prefix: string = decoded.prefix
+      const correctedList: IMediaFileResp[] = []
+      for (let i = 0; i < list.length; i++) {
+        const item = list[i]
+        if (item.name.split(prefix).length > 1 && item.name.split(prefix)[0] === '') {
+          correctedList.push(item)
+        }
+      }
+      return correctedList
     } catch (err) {
       return false
     }
@@ -59,44 +83,34 @@ export default function (path, config?: { mode?: { type: string, secret?: string
 
   router.get('/user/:token/list', function (req, res) {
     if (mode !== 'users') {
-
       res.json({ error: 'mode users' })
-
-
     } else {
-
-
-      if (getFilesByToken(res.params.token)) {
-
-        res.json({ list: fflist.list })
-
+      const byToken = getFilesByToken(req.params.token, fflist.list)
+      if (byToken) {
+        res.json({ list: byToken })
       } else {
         res.json({ error: 'json not valid' })
       }
-
     }
   })
 
 
   router.get('/user/:token/listjs', function (req, res) {
-
     if (mode === 'users') {
-
-      if (getFilesByToken(res.params.token)) {
-
-        res.send('var list=' + JSON.stringify(fflist.list))
+      const byToken = getFilesByToken(res.params.token, fflist.list)
+      if (byToken) {
+        res.send('var list=' + JSON.stringify(byToken))
       } else {
         res.json({ error: 'json not valid' })
       }
     } else {
       res.json({ error: 'mode users' })
     }
-
   })
 
+  router.get('/ping', function (req, res) {
+    res.json({ pong: 'ok' })
+  })
 
   return router
-
-
-
 }
