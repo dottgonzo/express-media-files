@@ -97,7 +97,7 @@ export default function (path, config?: { mode?: { type: string, secret?: string
 
   router.get('/user/:token/listjs', function (req, res) {
     if (mode === 'users') {
-      const byToken = getFilesByToken(res.params.token, fflist.list)
+      const byToken = getFilesByToken(req.params.token, fflist.list)
       if (byToken) {
         res.send('var list=' + JSON.stringify(byToken))
       } else {
