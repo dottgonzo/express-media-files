@@ -1,6 +1,6 @@
 {
   "name": "express-media-files",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Express media file db",
   "main": "index.js",
   "dependencies": {
