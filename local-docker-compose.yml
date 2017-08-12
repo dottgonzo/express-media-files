@@ -1,0 +1,27 @@
+version: '2'
+
+
+networks:
+ proxy-tier:
+  external:
+   name: nginx-proxy
+ 
+
+services:
+  apiauth:
+    image: registry.kernel.online:5000/apiauth
+    restart: always
+    ports:
+    - 3000:3000
+    environment:
+
+
+    - VIRTUAL_HOST=auth.dariocaruso.info
+    - VIRTUAL_PORT=3000
+    - VIRTUAL_NETWORK=proxy-tier
+    - LETSENCRYPT_HOST=auth.dariocaruso.info
+    - LETSENCRYPT_EMAIL=darioyzf@gmail.com
+    networks:
+    - proxy-tier
+    links:
+    - mongo:mongo
