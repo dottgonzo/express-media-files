@@ -20,4 +20,5 @@ else if (process.env.mode === 'user') {
     }
     app.use('/restricted', index_1.default(videofolder, { mode: { type: 'users', secret: process.env.SECRET, ignoreExpiration: true } }));
 }
+app.use('/video', express.static(videofolder));
 app.listen(3000);

@@ -39,6 +39,7 @@ if (!process.env.mode) {
 }
 
 
+app.use('/video', express.static(videofolder))
 
 
 

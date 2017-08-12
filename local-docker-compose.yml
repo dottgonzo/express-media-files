@@ -10,10 +10,11 @@ networks:
 services:
   mediaserver:
     image: dottgonzo/express-media-files
+    restart: always
     ports:
       - 3000:3000
     volumes:
-      - /home/dario/Video:/app/videofolder
+      - /home/dario/works/express-media-files/test/video/:/app/videofolder
     environment:
       - VIDEOFOLDER=/app/videofolder
     networks:
