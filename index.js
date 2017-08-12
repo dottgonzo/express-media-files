@@ -73,7 +73,9 @@ function default_1(path, config) {
         if (mode === 'users') {
             var byToken = getFilesByToken(req.params.token, fflist.list);
             if (byToken) {
-                res.send('var list=' + JSON.stringify(byToken));
+                var script = 'var mediaListArray=' + JSON.stringify(fflist.list) + ';';
+                script += 'var mediaServerDb=' + req.protocol + '://' + req.get('host') + req.originalUrl + ';';
+                res.send(script);
             }
             else {
                 res.json({ error: 'json not valid' });

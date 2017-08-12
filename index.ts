@@ -104,7 +104,9 @@ export default function (path, config?: { exclude?: string[], serverUri?: { path
     if (mode === 'users') {
       const byToken = getFilesByToken(req.params.token, fflist.list)
       if (byToken) {
-        res.send('var list=' + JSON.stringify(byToken))
+        let script = 'var mediaListArray=' + JSON.stringify(fflist.list) + ';'
+        script += 'var mediaServerDb=' + req.protocol + '://' + req.get('host') + req.originalUrl + ';'
+        res.send(script)
       } else {
         res.json({ error: 'json not valid' })
       }
