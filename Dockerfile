@@ -4,5 +4,5 @@ RUN apk update && apk add ffmpeg && rm -rf /var/cache/apk/*
 RUN mkdir /app
 WORKDIR /app
 COPY ./* /app/
-CMD node index
+CMD node server
 

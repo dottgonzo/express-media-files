@@ -8,9 +8,8 @@ networks:
  
 
 services:
-  apiauth:
+  mediaserver:
     image: dottgonzo/express-media-files
-    restart: always
     ports:
       - 3000:3000
     volumes:
@@ -19,5 +18,3 @@ services:
       - VIDEOFOLDER=/app/videofolder
     networks:
       - proxy-tier
-    links:
-      - mongo:mongo
