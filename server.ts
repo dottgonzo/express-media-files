@@ -17,9 +17,9 @@ if (!process.env.videofolder) {
     throw Error('no videofolder provided (by process env)')
 }
 
-const videofolder = process.env.videofolder
+const videofolder = process.env.VIDEOFOLDER
 
-if (process.env.prefix) prefix = process.env.prefix
+if (process.env.PREFIX) prefix = process.env.PREFIX
 
 
 
@@ -31,10 +31,10 @@ if (!process.env.mode) {
     app.use('/', router(videofolder))
 
 } else if (process.env.mode === 'user') {
-    if (!process.env.secret) {
+    if (!process.env.SECRET) {
         throw Error('no secret provided (by process env)')
     }
-    app.use('/restricted', router(videofolder, { mode: { type: 'users', secret: process.env.secret, ignoreExpiration: true } }))
+    app.use('/restricted', router(videofolder, { mode: { type: 'users', secret: process.env.SECRET, ignoreExpiration: true } }))
 
 }
 

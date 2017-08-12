@@ -9,7 +9,7 @@ networks:
 
 services:
   apiauth:
-    image: registry.kernel.online:5000/apiauth
+    image: dottgonzo/express-media-files
     restart: always
     ports:
     - 3000:3000
