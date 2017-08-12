@@ -104,7 +104,7 @@ export default function (path, config?: { exclude?: string[], serverUri?: { path
     if (mode === 'users') {
       const byToken = getFilesByToken(req.params.token, fflist.list)
       if (byToken) {
-        let script = 'var mediaListArray=' + JSON.stringify(fflist.list) + ';'
+        let script = 'var mediaListArray=' + JSON.stringify(byToken) + ';'
         script += 'var mediaServerDb="' + req.protocol + '://' + req.get('host') + req.originalUrl.split('/user/')[0] + '";'
         res.send(script)
       } else {
