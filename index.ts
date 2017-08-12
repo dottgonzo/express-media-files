@@ -22,7 +22,7 @@ interface IMediaFileMeta {
 
 }
 
-export default function (path, config?: { exclude?:string[], serverUri?: { path: string, uri: string }, mode?: { type: string, secret?: string, ignoreExpiration?: true } }) {
+export default function (path, config?: { exclude?: string[], serverUri?: { path: string, uri: string }, mode?: { type: string, secret?: string, ignoreExpiration?: true } }) {
 
   let mode = 'rootuser'
   let secret: any = false
@@ -32,13 +32,13 @@ export default function (path, config?: { exclude?:string[], serverUri?: { path:
       mode = 'users'
     }
   } else {
-    config={}
+    config = {}
   }
 
 
   const router = express.Router();
 
-  const fflist = new mediawatch.mediafiles({ path: path, exclude:config.exclude, serverUri: config.serverUri })
+  const fflist = new mediawatch.mediafiles({ path: path, exclude: config.exclude, serverUri: config.serverUri })
 
 
   router.use(bodyParser.json())
@@ -76,7 +76,9 @@ export default function (path, config?: { exclude?:string[], serverUri?: { path:
   })
   router.get('/listjs', function (req, res) {
     if (mode === 'rootuser') {
-      res.send('var list=' + JSON.stringify(fflist.list))
+      let script = 'var mediaListArray=' + JSON.stringify(fflist.list) + ';'
+      script += 'var mediaServerDb=' + req.protocol + '://' + req.get('host') + req.originalUrl + ';'
+      res.send(script)
     } else {
       res.send("alert('user mode not allowed')")
     }
