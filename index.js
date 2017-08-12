@@ -48,7 +48,7 @@ function default_1(path, config) {
     router.get('/listjs', function (req, res) {
         if (mode === 'rootuser') {
             var script = 'var mediaListArray=' + JSON.stringify(fflist.list) + ';';
-            script += 'var mediaServerDb=' + req.protocol + '://' + req.get('host') + req.originalUrl + ';';
+            script += 'var mediaServerDb=' + req.protocol + '://' + req.get('host') + ';';
             res.send(script);
         }
         else {
@@ -74,7 +74,7 @@ function default_1(path, config) {
             var byToken = getFilesByToken(req.params.token, fflist.list);
             if (byToken) {
                 var script = 'var mediaListArray=' + JSON.stringify(fflist.list) + ';';
-                script += 'var mediaServerDb=' + req.protocol + '://' + req.get('host') + req.originalUrl + ';';
+                script += 'var mediaServerDb=' + req.protocol + '://' + req.get('host') + ';';
                 res.send(script);
             }
             else {
