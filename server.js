@@ -4,7 +4,7 @@ var index_1 = require("./index");
 var express = require("express");
 var app = express();
 var prefix = '';
-if (!process.env.videofolder) {
+if (!process.env.VIDEOFOLDER) {
     throw Error('no videofolder provided (by process env)');
 }
 var videofolder = process.env.VIDEOFOLDER;

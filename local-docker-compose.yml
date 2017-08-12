@@ -12,16 +12,12 @@ services:
     image: dottgonzo/express-media-files
     restart: always
     ports:
-    - 3000:3000
+      - 3000:3000
+    volumes:
+      - /home/dario/Video:/app/videofolder
     environment:
-
-
-    - VIRTUAL_HOST=auth.dariocaruso.info
-    - VIRTUAL_PORT=3000
-    - VIRTUAL_NETWORK=proxy-tier
-    - LETSENCRYPT_HOST=auth.dariocaruso.info
-    - LETSENCRYPT_EMAIL=darioyzf@gmail.com
+      - VIDEOFOLDER=/app/videofolder
     networks:
-    - proxy-tier
+      - proxy-tier
     links:
-    - mongo:mongo
+      - mongo:mongo

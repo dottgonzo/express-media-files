@@ -1,3 +1,3 @@
 #! /bin/bash
 
-videofolder="$PWD/test/video/" node server
+VIDEOFOLDER="$PWD/test/video/" node server

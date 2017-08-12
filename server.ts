@@ -13,7 +13,7 @@ let prefix: string = ''
 
 
 
-if (!process.env.videofolder) {
+if (!process.env.VIDEOFOLDER) {
     throw Error('no videofolder provided (by process env)')
 }
 
