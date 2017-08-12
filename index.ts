@@ -77,7 +77,7 @@ export default function (path, config?: { exclude?: string[], serverUri?: { path
   router.get('/listjs', function (req, res) {
     if (mode === 'rootuser') {
       let script = 'var mediaListArray=' + JSON.stringify(fflist.list) + ';'
-      script += 'var mediaServerDb=' + req.protocol + '://' + req.get('host') + req.originalUrl + ';'
+      script += 'var mediaServerDb=' + req.protocol + '://' + req.get('host') + ';'
       res.send(script)
     } else {
       res.send("alert('user mode not allowed')")
@@ -105,7 +105,7 @@ export default function (path, config?: { exclude?: string[], serverUri?: { path
       const byToken = getFilesByToken(req.params.token, fflist.list)
       if (byToken) {
         let script = 'var mediaListArray=' + JSON.stringify(fflist.list) + ';'
-        script += 'var mediaServerDb=' + req.protocol + '://' + req.get('host') + req.originalUrl + ';'
+        script += 'var mediaServerDb=' + req.protocol + '://' + req.get('host') + ';'
         res.send(script)
       } else {
         res.json({ error: 'json not valid' })
