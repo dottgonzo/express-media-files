@@ -14,6 +14,8 @@ services:
     volumes:
       - /cloud/volumes/streamerdata/:/app/videofolder
       - /cloud/volumes/videomanagerfiles/:/app/destfolder
+    port:
+      - 45231:3000
     environment:
       - VIDEOFOLDER=/app/videofolder/
       - PORT=3000
