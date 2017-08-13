@@ -97,7 +97,6 @@ function default_1(path, config) {
     }
     else {
         config = {};
-        router.use('/video', express.static(path));
     }
     var fflist = new mediawatch.mediafiles({ path: path, exclude: config.exclude, serverUri: config.serverUri });
     if (mode === 'users') {
@@ -109,8 +108,8 @@ function default_1(path, config) {
             else
                 next();
         });
-        router.use('/videolibrary', express.static(path));
     }
+    router.use('/videolibrary', express.static(path));
     router.get('/list', function (req, res) {
         if (mode === 'rootuser') {
             res.json({ list: fflist.list });
@@ -165,7 +164,8 @@ function default_1(path, config) {
     if (config.conversion && config.conversion.dest) {
         router.post('/convert', function (req, res) {
             var data = req.body;
-            var fileexist = checkfile(data.token, fflist.list, config.mode, data.video.path, path);
+            console.log(data.token, fflist.list, config.mode, data.video.path, path);
+            var fileexist = checkfile(data.token, fflist.list, config.mode, data.video.fullname, path);
             if (fileexist) {
                 console.log(data.video.path, { startTime: data.cut.data.from, duration: data.cut.data.duration });
                 var ffmpeg = new ffvideoconverter.FFVideoConvert({ destinationPath: config.conversion.dest });

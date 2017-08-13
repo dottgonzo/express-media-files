@@ -2,7 +2,7 @@ import * as mediawatch from 'mediawatch'
 import * as Promise from 'bluebird'
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
-import * as  jwt from 'jsonwebtoken'
+import * as jwt from 'jsonwebtoken'
 import * as ffvideoconverter from 'ffvideoconverter'
 import * as rpj from 'request-promise-json'
 
@@ -133,7 +133,6 @@ export default function (path, config?: { exclude?: string[], serverUri?: { path
     }
   } else {
     config = {}
-    router.use('/video', express.static(path))
 
   }
 
@@ -151,13 +150,13 @@ export default function (path, config?: { exclude?: string[], serverUri?: { path
       else
         next();
     });
-    router.use('/videolibrary', express.static(path))
 
   }
 
   // use res.render to load up an ejs view file
 
-
+  router.use('/videolibrary', express.static(path))
+  
 
   router.get('/list', function (req, res) {
     if (mode === 'rootuser') {
@@ -215,8 +214,9 @@ export default function (path, config?: { exclude?: string[], serverUri?: { path
   if (config.conversion && config.conversion.dest) {
     router.post('/convert', function (req, res) {
       const data = req.body
+console.log(data.token, fflist.list, config.mode, data.video.path, path)
 
-      const fileexist = checkfile(data.token, fflist.list, config.mode, data.video.path, path)
+      const fileexist = checkfile(data.token, fflist.list, config.mode, data.video.fullname, path)
       
       
         if (fileexist) {

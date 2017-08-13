@@ -1,6 +1,7 @@
 import router from './index'
 import * as express from 'express'
 import * as jwt from 'jsonwebtoken'
+import * as cors from 'cors'
 
 
 export interface IOptions {
@@ -11,8 +12,9 @@ export interface IOptions {
 }
 
 const app = express()
+app.use(cors())
 
-const mountpoint = '/app'
+const mountpoint = '/'
 
 let prefix: string = ''
 const options = <IOptions>{}
@@ -35,31 +37,24 @@ if (!process.env.PORT) {
     process.env.PORT = 3000
 }
 if (process.env.CONVERSIONDEST) {
-    options.conversion = {dest:process.env.CONVERSIONDEST}
+    options.conversion = { dest: process.env.CONVERSIONDEST }
 }
 
-if (process.env.MODE === 'user'&&process.env.SECRET){
-    options.mode={ type: 'users', secret: process.env.SECRET, ignoreExpiration: true }
+if (process.env.MODE === 'user' && process.env.SECRET) {
+    options.mode = { type: 'users', secret: process.env.SECRET, ignoreExpiration: true }
 }
 
-options.serverUri={ path: videofolder, uri: process.env.SERVERURI + mountpoint + '/videolibrary/' }
+options.serverUri = { path: videofolder, uri: process.env.SERVERURI + mountpoint + 'videolibrary/' }
 
 if (!process.env.MODE) {
-    app.use(mountpoint, router(videofolder, options))
     console.log(videofolder)
-
 } else if (process.env.MODE === 'user') {
     if (!process.env.SECRET) {
         throw Error('no secret provided (by process env)')
     }
-
-    
-    app.use('/app', router(videofolder, options))
-
     console.log(jwt.sign({ prefix: '' }, process.env.SECRET))
-
-
 }
+app.use(mountpoint, router(videofolder, options))
 
 
 
