@@ -72,7 +72,6 @@ function basicAuth(req, mode, list, serverPath) {
         }
     }
     else {
-        console.log('ee', req.query);
         return false;
     }
 }

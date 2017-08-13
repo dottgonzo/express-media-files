@@ -1,3 +1,3 @@
 #! /bin/bash
 
-SECRET="user" MODE="user" VIDEOFOLDER="$PWD/test/video/" node server
+SERVERURI="http://localhost:3000" SECRET="user" MODE="user" VIDEOFOLDER="$PWD/test/video/" node server
