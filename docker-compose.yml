@@ -1,0 +1,30 @@
+version: '2'
+
+
+networks:
+ proxy-tier:
+  external:
+   name: nginx-proxy
+ 
+
+services:
+  mediaserver:
+    image: dottgonzo/express-media-files
+    volumes:
+      - /cloud/volumes/streamerdata/:/app/videofolder
+      - /cloud/volumes/videomanagerfiles/:/app/destfolder
+    environment:
+      - VIDEOFOLDER=/app/videofolder/
+      - PORT=3000
+      - CONVERSIONDEST=/app/destfolder
+      - SERVERURI=https://conv.kernel.online
+      - SECRET=gU£lg3wEew$gf2Ya
+      - MODE=user
+
+      - VIRTUAL_HOST=conv.kernel.online
+      - VIRTUAL_PORT=3000
+      - VIRTUAL_NETWORK=proxy-tier
+      - LETSENCRYPT_HOST=conv.kernel.online
+      - LETSENCRYPT_EMAIL=mail@dariocaruso.info
+    networks:
+      - proxy-tier

@@ -10,12 +10,17 @@ networks:
 services:
   mediaserver:
     image: dottgonzo/express-media-files
-    restart: always
     ports:
-      - 3000:3000
+      - 3001:3000
     volumes:
       - /home/dario/works/express-media-files/test/video/:/app/videofolder
+      - /tmp/:/app/destfolder
     environment:
-      - VIDEOFOLDER=/app/videofolder
+      - VIDEOFOLDER=/app/videofolder/
+      - PORT=3000
+      - CONVERSIONDEST=/app/destfolder
+      - SERVERURI=http://localhost:3001
+      - SECRET=zzzzzzzzz
+      - MODE=user
     networks:
       - proxy-tier
