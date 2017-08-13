@@ -9,10 +9,6 @@ const app = express()
 let prefix: string = ''
 
 
-
-
-
-
 if (!process.env.VIDEOFOLDER) {
     throw Error('no videofolder provided (by process env)')
 }
@@ -23,23 +19,22 @@ if (process.env.PREFIX) prefix = process.env.PREFIX
 
 
 
-    console.log(videofolder)
-    
 
-// console.log(videofolder)
-if (!process.env.mode) {
-    app.use('/', router(videofolder))
+if (!process.env.MODE) {
+    app.use('/app', router(videofolder))
+ console.log(videofolder)
 
-} else if (process.env.mode === 'user') {
+} else if (process.env.MODE === 'user') {
     if (!process.env.SECRET) {
         throw Error('no secret provided (by process env)')
     }
-    app.use('/restricted', router(videofolder, { mode: { type: 'users', secret: process.env.SECRET, ignoreExpiration: true } }))
+    app.use('/app', router(videofolder, { mode: { type: 'users', secret: process.env.SECRET, ignoreExpiration: true } }))
+
+console.log(jwt.sign({ prefix: '' },process.env.SECRET))
+
 
 }
 
-
-app.use('/video', express.static(videofolder))
 
 
 

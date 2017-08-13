@@ -4,26 +4,11 @@ var mediawatch = require("mediawatch");
 var express = require("express");
 var bodyParser = require("body-parser");
 var jwt = require("jsonwebtoken");
-function default_1(path, config) {
-    var mode = 'rootuser';
-    var secret = false;
-    if (config) {
-        if (config.mode && config.mode.type === 'users' && config.mode.secret) {
-            secret = config.mode.secret;
-            mode = 'users';
-        }
-    }
-    else {
-        config = {};
-    }
-    var router = express.Router();
-    var fflist = new mediawatch.mediafiles({ path: path, exclude: config.exclude, serverUri: config.serverUri });
-    router.use(bodyParser.json());
-    router.use(bodyParser.urlencoded({ extended: true }));
-    function getFilesByToken(token, list) {
-        try {
-            var decoded = jwt.verify(token, config.mode.secret, { ignoreExpiration: config.mode.ignoreExpiration });
-            var prefix = decoded.prefix;
+function getFilesByToken(token, list, mode) {
+    try {
+        var decoded = jwt.verify(token, mode.secret, { ignoreExpiration: mode.ignoreExpiration });
+        var prefix = decoded.prefix;
+        if (prefix) {
             var correctedList = [];
             for (var i = 0; i < list.length; i++) {
                 var item = list[i];
@@ -33,9 +18,98 @@ function default_1(path, config) {
             }
             return correctedList;
         }
+        else {
+            return list;
+        }
+    }
+    catch (err) {
+        console.log(err);
+        return false;
+    }
+}
+function checkfile(token, list, mode, filePath, serverPath) {
+    var exists = false;
+    var newlist = getFilesByToken(token, list, mode);
+    if (newlist) {
+        for (var i = 0; i < newlist.length; i++) {
+            console.log(newlist[i].path, serverPath + filePath);
+            if (newlist[i].path === serverPath + filePath)
+                exists = true;
+        }
+    }
+    if (exists) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+function basicAuth(req, mode, list, serverPath) {
+    if (req.query && req.query.token) {
+        try {
+            var token = jwt.verify(req.query.token, mode.secret);
+            console.log('decoded', token);
+            if (token && token.prefix !== false) {
+                var file = req.originalUrl.split('?')[0].split('/')[req.originalUrl.split('?')[0].split('/').length - 1];
+                var filteredlist = checkfile(req.query.token, list, mode, file, serverPath);
+                console.log(file);
+                console.log(filteredlist);
+                if (filteredlist) {
+                    console.log(getFilesByToken(req.query.token, list, mode));
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
         catch (err) {
+            console.error('unauthorized');
             return false;
         }
+    }
+    else {
+        console.log('ee', req.query);
+        return false;
+    }
+}
+function auth(req, res, next, mode, list, serverPath) {
+    if (basicAuth(req, mode, list, serverPath))
+        return next();
+    else {
+        return res.sendStatus(401);
+    }
+}
+function default_1(path, config) {
+    var mode = 'rootuser';
+    var secret = false;
+    var router = express.Router();
+    router.use(bodyParser.json());
+    router.use(bodyParser.urlencoded({ extended: true }));
+    if (config) {
+        if (config.mode && config.mode.type === 'users' && config.mode.secret) {
+            secret = config.mode.secret;
+            mode = 'users';
+        }
+    }
+    else {
+        config = {};
+        router.use('/video', express.static(path));
+    }
+    var fflist = new mediawatch.mediafiles({ path: path, exclude: config.exclude, serverUri: config.serverUri });
+    if (mode === 'users') {
+        router.use(function (req, res, next) {
+            if (req.url.indexOf('videolibrary') != -1) {
+                console.log(req.query);
+                return auth(req, res, next, config.mode, fflist.list, path);
+            }
+            else
+                next();
+        });
+        router.use('/videolibrary', express.static(path));
     }
     router.get('/list', function (req, res) {
         if (mode === 'rootuser') {
@@ -60,7 +134,7 @@ function default_1(path, config) {
             res.json({ error: 'mode users' });
         }
         else {
-            var byToken = getFilesByToken(req.params.token, fflist.list);
+            var byToken = getFilesByToken(req.params.token, fflist.list, config.mode);
             if (byToken) {
                 res.json({ list: byToken });
             }
@@ -71,7 +145,7 @@ function default_1(path, config) {
     });
     router.get('/user/:token/listjs', function (req, res) {
         if (mode === 'users') {
-            var byToken = getFilesByToken(req.params.token, fflist.list);
+            var byToken = getFilesByToken(req.params.token, fflist.list, config.mode);
             if (byToken) {
                 var script = 'var mediaListArray=' + JSON.stringify(byToken) + ';';
                 script += 'var mediaServerDb="' + req.protocol + '://' + req.get('host') + req.originalUrl.split('/user/')[0] + '";';

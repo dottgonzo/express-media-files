@@ -1,3 +1,3 @@
 #! /bin/bash
 
-VIDEOFOLDER="$PWD/test/video/" node server
+SECRET="user" MODE="user" VIDEOFOLDER="$PWD/test/video/" node server
