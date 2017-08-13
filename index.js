@@ -4,6 +4,7 @@ var mediawatch = require("mediawatch");
 var express = require("express");
 var bodyParser = require("body-parser");
 var jwt = require("jsonwebtoken");
+var ffvideoconverter = require("ffvideoconverter");
 function getFilesByToken(token, list, mode) {
     try {
         var decoded = jwt.verify(token, mode.secret, { ignoreExpiration: mode.ignoreExpiration });
@@ -161,6 +162,24 @@ function default_1(path, config) {
     router.get('/ping', function (req, res) {
         res.json({ pong: 'ok' });
     });
+    if (config.conversion && config.conversion.dest) {
+        router.post('/convert', function (req, res) {
+            var data = req.body;
+            var fileexist = checkfile(data.token, fflist.list, config.mode, data.video.path, path);
+            if (fileexist) {
+                console.log(data.video.path, { startTime: data.cut.data.from, duration: data.cut.data.duration });
+                var ffmpeg = new ffvideoconverter.FFVideoConvert({ destinationPath: config.conversion.dest });
+                ffmpeg.cutVideo(data.video.path, { startTime: data.cut.data.from, duration: data.cut.data.duration }).then(function () {
+                    res.json({ ok: true });
+                }).catch(function (err) {
+                    console.log({ error: 'file not exists or you are unauthorized' });
+                });
+            }
+            else {
+                res.json({ error: 'file not exists or you are unauthorized' });
+            }
+        });
+    }
     return router;
 }
 exports.default = default_1;

@@ -3,6 +3,8 @@ import * as Promise from 'bluebird'
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
 import * as  jwt from 'jsonwebtoken'
+import * as ffvideoconverter from 'ffvideoconverter'
+import * as rpj from 'request-promise-json'
 
 
 interface IMediaFileResp {
@@ -49,13 +51,13 @@ function getFilesByToken(token, list: IMediaFileResp[], mode): IMediaFileResp[] 
 }
 
 
-function checkfile(token, list: IMediaFileResp[], mode, filePath,serverPath) {
+function checkfile(token, list: IMediaFileResp[], mode, filePath, serverPath) {
   let exists = false
   const newlist = getFilesByToken(token, list, mode)
   if (newlist) {
     for (let i = 0; i < newlist.length; i++) {
-      console.log(newlist[i].path,serverPath+filePath)
-      if (newlist[i].path === serverPath+filePath) exists = true
+      console.log(newlist[i].path, serverPath + filePath)
+      if (newlist[i].path === serverPath + filePath) exists = true
     }
   }
 
@@ -66,7 +68,7 @@ function checkfile(token, list: IMediaFileResp[], mode, filePath,serverPath) {
   }
 }
 
-function basicAuth(req, mode, list,serverPath) {
+function basicAuth(req, mode, list, serverPath) {
   if (req.query && req.query.token) {
 
     try {
@@ -74,7 +76,7 @@ function basicAuth(req, mode, list,serverPath) {
       console.log('decoded', token)
       if (token && token.prefix !== false) {
         const file = req.originalUrl.split('?')[0].split('/')[req.originalUrl.split('?')[0].split('/').length - 1]
-        let filteredlist = checkfile(req.query.token, list, mode, file,serverPath)
+        let filteredlist = checkfile(req.query.token, list, mode, file, serverPath)
         console.log(file)
 
         console.log(filteredlist)
@@ -84,7 +86,7 @@ function basicAuth(req, mode, list,serverPath) {
           return true
 
         } else {
-          
+
           return false
 
         }
@@ -104,10 +106,10 @@ function basicAuth(req, mode, list,serverPath) {
   }
 
 }
-function auth(req, res, next, mode, list,serverPath) {
+function auth(req, res, next, mode, list, serverPath) {
 
 
-  if (basicAuth(req, mode, list,serverPath))
+  if (basicAuth(req, mode, list, serverPath))
     return next()
   else {
 
@@ -115,7 +117,7 @@ function auth(req, res, next, mode, list,serverPath) {
   }
 }
 
-export default function (path, config?: { exclude?: string[], serverUri?: { path: string, uri: string }, mode?: { type: string, secret?: string, ignoreExpiration?: true } }) {
+export default function (path, config?: { exclude?: string[], serverUri?: { path: string, uri: string }, mode?: { type: string, secret?: string, ignoreExpiration?: true }, conversion?: { dest: string, prefix?: string } }) {
 
   let mode = 'rootuser'
   let secret: any = false
@@ -137,13 +139,14 @@ export default function (path, config?: { exclude?: string[], serverUri?: { path
 
 
 
+
   const fflist = new mediawatch.mediafiles({ path: path, exclude: config.exclude, serverUri: config.serverUri })
 
   if (mode === 'users') {
     router.use(function (req, res, next) {
       if (req.url.indexOf('videolibrary') != -1) {
         console.log(req.query);
-        return auth(req, res, next, config.mode, fflist.list,path);
+        return auth(req, res, next, config.mode, fflist.list, path);
       }
       else
         next();
@@ -207,6 +210,36 @@ export default function (path, config?: { exclude?: string[], serverUri?: { path
   router.get('/ping', function (req, res) {
     res.json({ pong: 'ok' })
   })
+
+
+  if (config.conversion && config.conversion.dest) {
+    router.post('/convert', function (req, res) {
+      const data = req.body
+
+      const fileexist = checkfile(data.token, fflist.list, config.mode, data.video.path, path)
+      
+      
+        if (fileexist) {
+          console.log(data.video.path, { startTime: data.cut.data.from, duration: data.cut.data.duration })
+
+
+          const ffmpeg = new ffvideoconverter.FFVideoConvert({ destinationPath: config.conversion.dest })
+
+          ffmpeg.cutVideo(data.video.path, { startTime: data.cut.data.from, duration: data.cut.data.duration }).then(() => {
+            res.json({ ok: true })
+          }).catch((err) => {
+            console.log({ error: 'file not exists or you are unauthorized' })
+          })
+        } else {
+          res.json({ error: 'file not exists or you are unauthorized' })
+        }
+ 
+        
+
+
+    })
+
+  }
 
   return router
 }

@@ -1,12 +1,13 @@
 {
   "name": "express-media-files",
-  "version": "0.0.19",
+  "version": "0.0.21",
   "description": "Express media file db",
   "main": "index.js",
   "dependencies": {
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
+    "ffvideoconverter": "0.0.4",
     "jsonwebtoken": "^7.4.1",
     "mediawatch": "0.0.9"
   },
@@ -29,7 +30,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "build":"tsc"
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
