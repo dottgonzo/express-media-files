@@ -18,7 +18,7 @@ services:
       - PORT=3000
       - CONVERSIONDEST=/app/destfolder
       - SERVERURI=https://conv.kernel.online
-      - SECRET=gU£lg3wEew$gf2Ya
+      - SECRET="gU£lg3wEew$gf2Ya"
       - MODE=user
 
       - VIRTUAL_HOST=conv.kernel.online
