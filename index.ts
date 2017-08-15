@@ -43,6 +43,7 @@ function getFilesByToken(token, list: IMediaFileResp[], mode): IMediaFileResp[] 
     }
 
   } catch (err) {
+    console.log('access error')
     console.log(err)
     return false
   }
@@ -77,10 +78,6 @@ function basicAuth(req, mode, list, serverPath) {
       if (token && token.prefix !== false) {
         const file = req.originalUrl.split('?')[0].split('/')[req.originalUrl.split('?')[0].split('/').length - 1]
         let filteredlist = checkfile(req.query.token, list, mode, file, serverPath)
-
-        
-
-        
         if (filteredlist) {
 
           return true

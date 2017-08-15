@@ -24,6 +24,7 @@ function getFilesByToken(token, list, mode) {
         }
     }
     catch (err) {
+        console.log('access error');
         console.log(err);
         return false;
     }
@@ -33,7 +34,6 @@ function checkfile(token, list, mode, filePath, serverPath) {
     var newlist = getFilesByToken(token, list, mode);
     if (newlist) {
         for (var i = 0; i < newlist.length; i++) {
-            console.log(newlist[i].path, serverPath + filePath);
             if (newlist[i].path === serverPath + filePath)
                 exists = true;
         }
@@ -49,14 +49,10 @@ function basicAuth(req, mode, list, serverPath) {
     if (req.query && req.query.token) {
         try {
             var token = jwt.verify(req.query.token, mode.secret);
-            console.log('decoded', token);
             if (token && token.prefix !== false) {
                 var file = req.originalUrl.split('?')[0].split('/')[req.originalUrl.split('?')[0].split('/').length - 1];
                 var filteredlist = checkfile(req.query.token, list, mode, file, serverPath);
-                console.log(file);
-                console.log(filteredlist);
                 if (filteredlist) {
-                    console.log(getFilesByToken(req.query.token, list, mode));
                     return true;
                 }
                 else {
@@ -102,7 +98,6 @@ function default_1(path, config) {
     if (mode === 'users') {
         router.use(function (req, res, next) {
             if (req.url.indexOf('videolibrary') != -1) {
-                console.log(req.query);
                 return auth(req, res, next, config.mode, fflist.list, path);
             }
             else
