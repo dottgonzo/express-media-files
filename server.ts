@@ -36,6 +36,9 @@ if (!process.env.SERVERURI) {
 if (!process.env.PORT) {
     process.env.PORT = 3000
 }
+process.env.PORT = parseInt(process.env.PORT)
+
+
 if (process.env.CONVERSIONDEST) {
     options.conversion = { dest: process.env.CONVERSIONDEST }
 }

@@ -6,6 +6,6 @@ RUN apt-get install --yes nodejs build-essential
 RUN mkdir /app
 WORKDIR /app
 COPY . /app/
-RUN rm -rf ./node_modules && npm i
+RUN rm -rf ./node_modules && npm i --production
 CMD node server
 
