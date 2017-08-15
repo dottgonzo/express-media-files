@@ -56,7 +56,7 @@ function checkfile(token, list: IMediaFileResp[], mode, filePath, serverPath) {
   const newlist = getFilesByToken(token, list, mode)
   if (newlist) {
     for (let i = 0; i < newlist.length; i++) {
-      console.log(newlist[i].path, serverPath + filePath)
+
       if (newlist[i].path === serverPath + filePath) exists = true
     }
   }
@@ -73,16 +73,16 @@ function basicAuth(req, mode, list, serverPath) {
 
     try {
       const token = jwt.verify(req.query.token, mode.secret)
-      console.log('decoded', token)
+
       if (token && token.prefix !== false) {
         const file = req.originalUrl.split('?')[0].split('/')[req.originalUrl.split('?')[0].split('/').length - 1]
         let filteredlist = checkfile(req.query.token, list, mode, file, serverPath)
-        console.log(file)
 
-        console.log(filteredlist)
+        
 
+        
         if (filteredlist) {
-          console.log(getFilesByToken(req.query.token, list, mode))
+
           return true
 
         } else {
@@ -144,7 +144,7 @@ export default function (path, config?: { exclude?: string[], serverUri?: { path
   if (mode === 'users') {
     router.use(function (req, res, next) {
       if (req.url.indexOf('videolibrary') != -1) {
-        console.log(req.query);
+
         return auth(req, res, next, config.mode, fflist.list, path);
       }
       else
